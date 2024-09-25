@@ -21,7 +21,7 @@ let rec even x =
   | S Z -> false
   | S S x' -> even x'
 
-  (* ou alors faire not du prédécesseur *)
+  (* ou alors faire NOT du prédécesseur *)
 
 let rec pred x =
   match x with
