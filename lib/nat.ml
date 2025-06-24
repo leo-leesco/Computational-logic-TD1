@@ -1,29 +1,12 @@
 type nat = Z | S of nat
 
 let rec add x y = match x with Z -> y | S x' -> S (add x' y)
-
-let () =
-  let one = S Z in
-  let two = S one in
-  let three = S two in
-  let four = S three in
-  let five = S four in
-  assert (five = add two three)
-
 let rec even x = match x with Z -> true | S Z -> false | S (S x') -> even x'
 
 (* ou alors faire NOT du prédécesseur *)
 
-let rec pred x = match x with Z -> None | S x' -> Some x'
+let pred x = match x with Z -> None | S x' -> Some x'
 let rec half x = match x with Z -> Z | S Z -> Z | S (S x') -> S (half x')
-
-let () =
-  let one = S Z in
-  let two = S one in
-  let three = S two in
-  let four = S three in
-  let five = S four in
-  assert (two = half five)
 
 let rec halfway x =
   match x with
@@ -36,4 +19,3 @@ let rec halfway x =
       | None -> None)
 
 let half_panic x = halfway (Some x)
-
