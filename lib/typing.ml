@@ -30,9 +30,9 @@ let rec infer prgm =
       if infer p1 = TInt && infer p2 = TInt then TInt else raise Type_error
   | Lt (p1, p2) ->
       if infer p1 = TInt && infer p2 = TInt then TBool else raise Type_error
-  | If (ass, p1, p2) ->
+  | If (cond, p1, p2) ->
       let return_type = infer p1 in
-      if infer ass = TBool && return_type = infer p2 then return_type
+      if infer cond = TBool && return_type = infer p2 then return_type
       else raise Type_error
   | Pair (p1, p2) -> TPair (infer p1, infer p2)
   | Unit -> TUnit
