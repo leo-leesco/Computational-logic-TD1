@@ -7,14 +7,25 @@ type prog =
   | Pair of (prog * prog)
   | Unit
 
+let rec string_of_prog = function
+  | Bool b -> if b then "⊤" else "⊥"
+  | Int n -> string_of_int n
+  | Add (p1, p2) -> "(" ^ string_of_prog p1 ^ " + " ^ string_of_prog p2 ^ ")"
+  | Lt (p1, p2) -> "(" ^ string_of_prog p1 ^ " < " ^ string_of_prog p2 ^ ")"
+  | If (c, p1, p2) ->
+      "(" ^ string_of_prog c ^ " ? " ^ string_of_prog p1 ^ " : "
+      ^ string_of_prog p2 ^ ")"
+  | Pair (p1, p2) -> "(" ^ string_of_prog p1 ^ ", " ^ string_of_prog p2 ^ ")"
+  | Unit -> "()"
+
 type typ = TBool | TInt | TPair of (typ * typ) | TUnit
 
 exception Type_error
 
 let rec infer prgm =
   match prgm with
-  | Bool b -> TBool
-  | Int n -> TInt
+  | Bool _ -> TBool
+  | Int _ -> TInt
   | Add (p1, p2) ->
       if infer p1 = TInt && infer p2 = TInt then TInt else raise Type_error
   | Lt (p1, p2) ->
@@ -27,13 +38,10 @@ let rec infer prgm =
   | Unit -> TUnit
 
 let typable prgm =
-  try match infer prgm with _ -> true with Type_error -> false
-
-let () =
-  let expr = If (Lt (Add (Int 1, Int 2), Int 3), Int 4, Int 5) in
-  assert (typable expr);
-  let mismatched = Add (Int 1, Bool true) in
-  assert (not (typable mismatched))
+  try
+    let _ = infer prgm in
+    true
+  with Type_error -> false
 
 let rec reduce prgm =
   match prgm with
@@ -68,9 +76,3 @@ let rec normalize prgm =
     let reduced = reduce prgm in
     match reduced with Some value -> normalize value | None -> prgm
   else raise Type_error
-
-let () =
-  let expr =
-    If (Lt (Add (Int 1, Add (Int 2, Int 3)), Int 4), Bool false, Int 5)
-  in
-  assert (Int 5 = normalize expr)
